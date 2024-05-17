@@ -2,10 +2,13 @@ package pet_studio.pet_studio_spring.controller;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import pet_studio.pet_studio_spring.data.dto.UserDTO;
 import pet_studio.pet_studio_spring.data.dto.UserDao;
+import pet_studio.pet_studio_spring.data.dto.mypage.UserProfileDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +28,16 @@ public class UserController {
     public UserDTO save(@RequestBody UserDTO user){
         return userDao.save(user);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserProfileDTO> myPageMain(@PathVariable("userId") String userId) {
+        ResponseEntity<UserProfileDTO> response = userDao.myPageMain(userId);
+        if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
 
     @PostMapping("/user/login")
     public UserDTO login(@RequestBody UserDTO user){

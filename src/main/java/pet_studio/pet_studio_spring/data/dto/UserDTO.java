@@ -6,53 +6,27 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Table(name="user")
 public class UserDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "user_id")
     private String userId;
+
+    @Column(name = "user_password")
     private String userPassword;
+
+    @Column(name = "nick_name")
     private String nickName;
 
-    public int getId() {
-        return id;
-    }
+    @Column(name = "user_introduce")
+    private String introduce;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    @Column(name = "user_img")
+    private String img;
 
-    public String getUserId() {
-        return userId;
-    }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
-
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", userPassword='" + userPassword + '\'' +
-                ", nickName='" + nickName + '\'' +
-                '}';
-    }
 }
