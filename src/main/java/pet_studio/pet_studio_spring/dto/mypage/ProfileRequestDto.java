@@ -1,9 +1,9 @@
-package pet_studio.pet_studio_spring.data.dto.mypage;
+package pet_studio.pet_studio_spring.dto.mypage;
 
 import lombok.Data;
 
 @Data
-public class ProfileRequestDTO {
+public class ProfileRequestDto {
     private String nickName;
     private String introduce;
 }

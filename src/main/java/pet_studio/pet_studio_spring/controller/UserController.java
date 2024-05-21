@@ -1,37 +1,35 @@
 package pet_studio.pet_studio_spring.controller;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import pet_studio.pet_studio_spring.data.dto.UserDTO;
-import pet_studio.pet_studio_spring.data.dto.UserDao;
-import pet_studio.pet_studio_spring.data.dto.mypage.UserProfileDTO;
+import pet_studio.pet_studio_spring.domain.User;
+import pet_studio.pet_studio_spring.dto.user.UserDto;
+import pet_studio.pet_studio_spring.service.UserService;
+import pet_studio.pet_studio_spring.service.UserServiceImpl;
+import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserController {
     @Autowired
-    private UserDao userDao;
+    private UserService userService;
 	//private Map<String, UserDTO> userMap;
     @GetMapping("/user/get-all")
-    public List<UserDTO> getAll() {
-        return userDao.getAllUsers();
+    public List<User> getAll() {
+        return userService.getAllUsers();
     }
     @PostMapping("/user/save")
-    public UserDTO save(@RequestBody UserDTO user){
-        return userDao.save(user);
+    public ResponseEntity<?> saveUser(@RequestBody UserDto user){
+        return userService.save(user);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<UserProfileDTO> myPageMain(@PathVariable("userId") String userId) {
-        ResponseEntity<UserProfileDTO> response = userDao.myPageMain(userId);
+    public ResponseEntity<UserProfileDto> myPageMain(@PathVariable("userId") String userId) {
+        ResponseEntity<UserProfileDto> response = userService.myPageMain(userId);
         if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -40,12 +38,20 @@ public class UserController {
 
 
     @PostMapping("/user/login")
-    public UserDTO login(@RequestBody UserDTO user){
+    public ResponseEntity<User> login(@RequestBody UserDto user) {
+
         String userId = user.getUserId();
         String userPassword = user.getUserPassword();
 
-        return userDao.login(userId, userPassword);
-    }
+        User loggedInUser = userService.login(userId, userPassword);
 
+        // 만약 로그인이 성공했다면 해당 사용자 정보를 반환합니다.
+        if (loggedInUser != null) {
+            return ResponseEntity.ok(loggedInUser);
+        } else {
+            // 로그인에 실패했을 경우 401 Unauthorized 상태를 반환합니다.
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }
 

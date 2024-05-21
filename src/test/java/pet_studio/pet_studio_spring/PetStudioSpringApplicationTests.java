@@ -1,18 +1,14 @@
 package pet_studio.pet_studio_spring;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pet_studio.pet_studio_spring.data.dto.UserDTO;
-import pet_studio.pet_studio_spring.data.dto.UserDao;
-
-import java.util.List;
+import pet_studio.pet_studio_spring.service.UserServiceImpl;
 
 @SpringBootTest
 class PetStudioSpringApplicationTests {
 
 	@Autowired
-	private UserDao userDao;
+	private UserServiceImpl userServiceImpl;
 
 	//@Test
 //	void addUserTest() {

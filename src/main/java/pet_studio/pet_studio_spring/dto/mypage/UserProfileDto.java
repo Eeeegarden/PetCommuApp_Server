@@ -1,4 +1,4 @@
-package pet_studio.pet_studio_spring.data.dto.mypage;
+package pet_studio.pet_studio_spring.dto.mypage;
 
 
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserProfileDTO {
+public class UserProfileDto {
     private String userId;
     private String nickName;
     private String user_img;

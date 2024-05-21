@@ -1,16 +1,20 @@
-package pet_studio.pet_studio_spring.data.dto;
+package pet_studio.pet_studio_spring.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 @Entity
 @Table(name="user")
-public class UserDTO {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long userNo;
 
     @Column(name = "user_id")
     private String userId;
