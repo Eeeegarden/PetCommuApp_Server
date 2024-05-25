@@ -1,71 +1,81 @@
-//package pet_studio.pet_studio_spring.service;
-//
-//import lombok.RequiredArgsConstructor;
-//import lombok.Value;
-//import org.mariadb.jdbc.internal.logging.LoggerFactory;
-//import org.springframework.stereotype.Service;
-//import pet_studio.pet_studio_spring.repository.ImageRepository;
-//import pet_studio.pet_studio_spring.repository.UserRepository;
-//
-//import java.util.logging.Logger;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class ImageServiceImpl implements ImageService {
-//    private static final Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
-//
-//    private final ImageRepository imageRepository;
-//    private final UserRepository userRepository;
-//
-//    @Value("${file.path}")
-//    private String uploadFolder;
-//
-//    @Override
-//    public void upload(ImageUploadDTO imageUploadDTO, String email) {
-//        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
-//        MultipartFile file = imageUploadDTO.getFile();
-//
-//        UUID uuid = UUID.randomUUID();
-//        String imageFileName = uuid + "_" + file.getOriginalFilename();
-//
-//        File destinationFile = new File(uploadFolder + imageFileName);
-//
-//        try {
-//            file.transferTo(destinationFile);
-//
-//            Image image = imageRepository.findByMember(member);
-//            if (image != null) {
-//                // 이미지가 이미 존재하면 url 업데이트
-//                image.updateUrl("/profileImages/" + imageFileName);
-//            } else {
-//                // 이미지가 없으면 객체 생성 후 저장
-//                image = Image.builder()
-//                        .member(member)
-//                        .url("/profileImages/" + imageFileName)
-//                        .build();
-//            }
-//            imageRepository.save(image);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    @Override
-//    public ImageResponseDTO findImage(String email) {
-//        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
-//        Image image = imageRepository.findByMember(member);
-//
-//        String defaultImageUrl = "/profileImages/anonymous.png";
-//
-//        if (image == null) {
-//            return ImageResponseDTO.builder()
-//                    .url(defaultImageUrl)
-//                    .build();
-//        } else {
-//            return ImageResponseDTO.builder()
-//                    .url(image.getUrl())
-//                    .build();
-//        }
-//    }
-//}
-//}
+package pet_studio.pet_studio_spring.service;
+
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import pet_studio.pet_studio_spring.domain.Image;
+import pet_studio.pet_studio_spring.domain.User;
+import pet_studio.pet_studio_spring.dto.image.ImageResponseDto;
+import pet_studio.pet_studio_spring.dto.image.ImageUploadDto;
+import pet_studio.pet_studio_spring.repository.ImageRepository;
+import pet_studio.pet_studio_spring.repository.UserRepository;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class ImageServiceImpl implements ImageService {
+    private static final Logger logger = LoggerFactory.getLogger(ImageServiceImpl.class);
+
+    private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
+
+    @Value("${spring.file.profileImagePath}")
+    private String uploadFolder;
+
+    @Override
+    public void upload(ImageUploadDto imageUploadDTO, String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
+        MultipartFile file = imageUploadDTO.getFile();
+
+        UUID uuid = UUID.randomUUID();
+        String imageFileName = uuid + "_" + file.getOriginalFilename();
+
+        File destinationFile = new File(uploadFolder + imageFileName);
+
+        try {
+            file.transferTo(destinationFile);
+
+            Image image = imageRepository.findByUser(user);
+            String imageUrl = "/profileImages/" + imageFileName;
+            if (image != null) {
+                // 이미지가 이미 존재하면 url 업데이트
+                image.updateUrl(imageUrl);
+            } else {
+                // 이미지가 없으면 객체 생성 후 저장
+                image = Image.builder()
+                        .user(user)
+                        .url(imageUrl)
+                        .build();
+            }
+            imageRepository.save(image);
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ImageResponseDto findImage(String userId) {
+        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
+        Image image = imageRepository.findByUser(user);
+
+        String defaultImageUrl = "/profileImages/ic_account.png";
+
+        return ImageResponseDto.builder()
+                .url(image != null ? image.getUrl() : defaultImageUrl)
+                .build();
+    }
+    private static class UsernameNotFoundException extends RuntimeException {
+        public UsernameNotFoundException(String message) {
+            super(message);
+        }
+    }
+}
+

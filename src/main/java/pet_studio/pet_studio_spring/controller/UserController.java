@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import pet_studio.pet_studio_spring.domain.User;
+import pet_studio.pet_studio_spring.dto.image.ImageResponseDto;
 import pet_studio.pet_studio_spring.dto.user.UserDto;
 import pet_studio.pet_studio_spring.service.UserService;
 import pet_studio.pet_studio_spring.service.UserServiceImpl;
@@ -17,11 +18,11 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-	//private Map<String, UserDTO> userMap;
     @GetMapping("/user/get-all")
     public List<User> getAll() {
         return userService.getAllUsers();
     }
+
     @PostMapping("/user/save")
     public ResponseEntity<?> saveUser(@RequestBody UserDto user){
         return userService.save(user);

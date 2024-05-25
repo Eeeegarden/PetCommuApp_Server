@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface UserService {
 
-    public User findUserById(String id);
+    public User findUserById(String userid);
     public ResponseEntity<?> save(UserDto user);
 
     public List<User> getAllUsers();
@@ -25,7 +25,5 @@ public interface UserService {
     public User login(String userId, String userPassword);
 
     public ResponseEntity myPageMain(@PathVariable("userId") String userId);
-
-    public void delete(int id);
 
 }

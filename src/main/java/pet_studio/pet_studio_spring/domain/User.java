@@ -3,6 +3,8 @@ package pet_studio.pet_studio_spring.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,6 +33,10 @@ public class User {
     @Column(name = "user_img")
     private String img;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Image image;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Mypet> mypet;
 
 }
