@@ -6,5 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageUploadDto {
     private MultipartFile file;
     private String userId;
+    private String type;
 
 }

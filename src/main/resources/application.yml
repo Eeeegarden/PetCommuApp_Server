@@ -16,3 +16,4 @@ spring:
 
   file:
     profileImagePath: C:/Temp/profileImageUpload/
+    boardImagePath: C:/Temp/boardImageUpload/

@@ -28,10 +28,12 @@ public class ImageServiceImpl implements ImageService {
     @Value("${spring.file.profileImagePath}")
     private String uploadFolder;
 
+
     @Override
     public void upload(ImageUploadDto imageUploadDTO, String userId) {
         User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
         MultipartFile file = imageUploadDTO.getFile();
+        String type = imageUploadDTO.getType();
 
         UUID uuid = UUID.randomUUID();
         String imageFileName = uuid + "_" + file.getOriginalFilename();
@@ -41,8 +43,8 @@ public class ImageServiceImpl implements ImageService {
         try {
             file.transferTo(destinationFile);
 
-            Image image = imageRepository.findByUser(user);
-            String imageUrl = "/profileImages/" + imageFileName;
+            Image image = imageRepository.findByUserAndType(user, type).orElse(null);
+            String imageUrl = "/images/" + imageFileName;
             if (image != null) {
                 // 이미지가 이미 존재하면 url 업데이트
                 image.updateUrl(imageUrl);
@@ -51,11 +53,10 @@ public class ImageServiceImpl implements ImageService {
                 image = Image.builder()
                         .user(user)
                         .url(imageUrl)
+                        .type(type)
                         .build();
             }
             imageRepository.save(image);
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -64,7 +65,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseDto findImage(String userId) {
         User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
-        Image image = imageRepository.findByUser(user);
+        Image image = imageRepository.findByUserAndType(user, "profile").orElse(null);
 
         String defaultImageUrl = "/profileImages/ic_account.png";
 
@@ -72,10 +73,10 @@ public class ImageServiceImpl implements ImageService {
                 .url(image != null ? image.getUrl() : defaultImageUrl)
                 .build();
     }
+
     private static class UsernameNotFoundException extends RuntimeException {
         public UsernameNotFoundException(String message) {
             super(message);
         }
     }
 }
-

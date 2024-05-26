@@ -20,7 +20,11 @@ public class Image {
     @Column(nullable=false)
     private String url;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private String type; // profile or board
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no")
     private User user;
 

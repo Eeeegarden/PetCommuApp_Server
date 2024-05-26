@@ -5,18 +5,16 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString
 @Entity
-@Table(name="user")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userNo;
+    private Long userNo;
 
     @Column(name = "user_id")
     private String userId;
@@ -33,10 +31,14 @@ public class User {
     @Column(name = "user_img")
     private String img;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Image image;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Mypet> mypet;
+
+    public void updateimg(String img){
+        this.img = img;
+    }
 
 }

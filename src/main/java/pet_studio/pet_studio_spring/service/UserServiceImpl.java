@@ -47,6 +47,10 @@ public class UserServiceImpl implements UserService {
                 .introduce("한줄소개를 입력해주세요")
                 .img("/profileImages/ic_account.png")
                 .build();
+        Image image = Image.builder()
+                .url("/profileImages/ic_account.png")
+                .user(user)
+                .build();
         userRepository.save(user);
 
         return ResponseEntity.ok("사용자가 성공적으로 저장되었습니다.");
@@ -98,7 +102,7 @@ public class UserServiceImpl implements UserService {
         UserProfileDto result = UserProfileDto.builder()
                 .nickName(user.getNickName())
                 .userId(user.getUserId())
-                .userImageUrl(user.getImage().getUrl())
+                .userImageUrl(user.getImg())
                 .introduce(user.getIntroduce())
                 .build();
 

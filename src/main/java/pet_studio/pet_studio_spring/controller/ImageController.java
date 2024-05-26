@@ -19,11 +19,15 @@ public class ImageController {
     private final ImageService imageService;
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
     @PostMapping("/upload")
-    public ResponseEntity<String> upload(@RequestPart("userId") String userId,
-                                         @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<String> upload(
+            @RequestPart("userId") String userId,
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("type") String type) {
         ImageUploadDto imageUploadDto = new ImageUploadDto();
         imageUploadDto.setUserId(userId);
         imageUploadDto.setFile(file);
+        imageUploadDto.setType(type);
+
         try {
             imageService.upload(imageUploadDto, userId);
             return ResponseEntity.ok().body("이미지 업로드에 성공했습니다.");
