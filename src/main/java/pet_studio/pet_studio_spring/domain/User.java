@@ -1,5 +1,6 @@
 package pet_studio.pet_studio_spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,11 +32,21 @@ public class User {
     @Column(name = "user_img")
     private String img;
 
+    private Boolean isPrivate;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Image> images;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Mypet> mypet;
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Follow> followingList;
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Follow> followerList;
 
     public void updateimg(String img){
         this.img = img;
