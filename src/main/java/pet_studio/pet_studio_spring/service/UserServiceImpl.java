@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import pet_studio.pet_studio_spring.domain.Image;
 import pet_studio.pet_studio_spring.domain.User;
+import pet_studio.pet_studio_spring.dto.follow.FollowerDto;
+import pet_studio.pet_studio_spring.dto.follow.FollowingDto;
 import pet_studio.pet_studio_spring.dto.user.UserDto;
 import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
+import pet_studio.pet_studio_spring.dto.user.UserFollowListDto;
 import pet_studio.pet_studio_spring.exception.CustomException;
 import pet_studio.pet_studio_spring.exception.ErrorCode;
 import pet_studio.pet_studio_spring.repository.ImageRepository;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static pet_studio.pet_studio_spring.domain.FollowStatus.FOLLOWING;
 import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_NICKNAME;
 import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_USER;
 
@@ -116,6 +120,26 @@ public class UserServiceImpl implements UserService {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
 
+    }
+
+    // 팔로우,팔로잉 목록 조희
+    public UserFollowListDto getFollowList(String userId) {
+        User user = findUserById(userId);
+
+        List<FollowingDto> followingDTOs = user.getFollowingList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowingDto::convertToDTO)
+                .toList();
+
+        List<FollowerDto> followerDTOs = user.getFollowerList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowerDto::convertToDTO)
+                .toList();
+
+        return UserFollowListDto.builder()
+                .followerList(followerDTOs)
+                .followingList(followingDTOs)
+                .build();
     }
 
     public void validateUserId(String userId) {

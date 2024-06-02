@@ -17,12 +17,16 @@ public class FollowingDto {
 
     private Long id;
     private Long followingId;
+    private String nickName;
+    private String profileImage;
     private FollowStatus status;
 
     public static FollowingDto convertToDTO(Follow follow) {
         return FollowingDto.builder()
                 .id(follow.getId())
                 .followingId(follow.getFollowing().getUserNo())
+                .nickName(follow.getFollowing().getNickName())
+                .profileImage(follow.getFollowing().getImg())
                 .status(follow.getStatus())
                 .build();
     }
