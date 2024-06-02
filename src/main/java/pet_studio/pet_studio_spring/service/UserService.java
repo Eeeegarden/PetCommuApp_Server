@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import pet_studio.pet_studio_spring.domain.User;
 import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
 import pet_studio.pet_studio_spring.dto.user.UserDto;
+import pet_studio.pet_studio_spring.dto.user.UserFollowListDto;
 import pet_studio.pet_studio_spring.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -25,5 +26,7 @@ public interface UserService {
     public User login(String userId, String userPassword);
 
     public ResponseEntity myPageMain(@PathVariable("userId") String userId);
+    public UserFollowListDto getFollowList(String userId);
+
 
 }

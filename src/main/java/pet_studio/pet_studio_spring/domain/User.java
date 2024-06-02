@@ -32,6 +32,7 @@ public class User {
     @Column(name = "user_img")
     private String img;
 
+    @Column(nullable = false)
     private Boolean isPrivate;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
