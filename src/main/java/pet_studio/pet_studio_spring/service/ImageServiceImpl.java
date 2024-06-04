@@ -57,6 +57,11 @@ public class ImageServiceImpl implements ImageService {
                         .build();
             }
             imageRepository.save(image);
+
+            // User 테이블의 img 필드 업데이트
+            user.updateimg(imageUrl);
+            userRepository.save(user);
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
