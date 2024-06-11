@@ -101,7 +101,7 @@ public class BoardServiceImpl implements BoardService {
 
         Page<Board> boardPage = boardRepository.findByUserIn(followings, sortedPageable);
 
-        return BoardListDto.convertToDTO(boardPage);
+        return BoardListDto.convertToDTO(boardPage, userId);
     }
 
 

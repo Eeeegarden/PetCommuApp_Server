@@ -31,9 +31,12 @@ import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_USE
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private ImageRepository imageRepository;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private FollowService followService;
 
     public User findUserById(String id) {
         Optional<User> user = userRepository.findByUserId(id);
@@ -105,18 +108,24 @@ public class UserServiceImpl implements UserService {
 
     public ResponseEntity<?> myPageMain(@PathVariable("userId") String userId){
         Optional<User> optionalUser = userRepository.findByUserId(userId);
+
         if (optionalUser.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        int followingCnt = followService.followings(optionalUser.get().getUserNo());
+        int followerCnt = followService.followers(optionalUser.get().getUserNo());
+
+
 
         User user = optionalUser.get();
+
         UserProfileDto result = new UserProfileDto();
         result.setUserId(user.getUserId());
         result.setNickName(user.getNickName());
         result.setUserImageUrl(user.getImg());
         result.setIntroduce(user.getIntroduce());
-        result.setFromMeToOthersCnt(0);
-        result.setToMeFromOthersCnt(0);
+        result.setfollowerCnt(followerCnt);
+        result.setfollowingCnt(followingCnt);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

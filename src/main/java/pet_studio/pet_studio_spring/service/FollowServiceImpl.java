@@ -22,6 +22,13 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
+    public int followings(Long userNo){
+        return (int) followRepository.countByFollowingUserNo(userNo);
+    }
+    public int followers(Long userNo){
+        return (int) followRepository.countByFollowerUserNo(userNo);
+    }
+
     @Transactional
     public FollowStatus toggleFollow(Long followingId,String userId) {
         User follower = userRepository.findByUserId(userId)
@@ -34,7 +41,7 @@ public class FollowServiceImpl implements FollowService {
         }
 
         if (followRepository.existsByFollowerAndFollowing(follower, following)) {
-            followRepository.deleteByFollowerAndFollowing(follower, following);
+            followRepository.deleteByFollowerUserNoAndFollowingUserNo(follower.getUserNo(), following.getUserNo());
             return UNFOLLOWING;
         } else {
             if (following.getIsPrivate()) {

@@ -52,5 +52,6 @@ public class User {
     public void updateimg(String img){
         this.img = img;
     }
+    public void updateintroduce(String introduce){this.introduce = introduce;}
 
 }
