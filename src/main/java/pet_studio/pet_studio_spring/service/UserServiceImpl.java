@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private ImageRepository imageRepository;
     @Autowired
     private ImageService imageService;
+    private FollowService followService;
 
     public User findUserById(String id) {
         Optional<User> user = userRepository.findByUserId(id);
@@ -105,9 +106,14 @@ public class UserServiceImpl implements UserService {
 
     public ResponseEntity<?> myPageMain(@PathVariable("userId") String userId){
         Optional<User> optionalUser = userRepository.findByUserId(userId);
+
         if (optionalUser.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        int followingCnt = followService.followings(optionalUser.get().getUserNo());
+//        int followerCnt = followService.follower(userId);
+
+
 
         User user = optionalUser.get();
         String userImageUrl = imageService.findImage(userId).getUrl();
@@ -116,6 +122,8 @@ public class UserServiceImpl implements UserService {
                 .userId(user.getUserId())
                 .userImageUrl(user.getImg())
                 .introduce(user.getIntroduce())
+//                .followerCnt(followerCnt)
+                .followingCnt(followingCnt)
                 .build();
 
         return new ResponseEntity<>(result, HttpStatus.OK);

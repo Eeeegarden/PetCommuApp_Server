@@ -15,9 +15,12 @@ import java.util.List;
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
+    long countByFollowingUserNo(Long userNo);
+    long countByFollowerUserNo(Long userNo);
+
     boolean existsByFollowerAndFollowing(User follower, User following);
 
-    void deleteByFollowerAndFollowing(User follower, User following);
+    void deleteByFollowerUserNoAndFollowingUserNo(Long followerNo, Long followingNo);
 
     Page<Follow> findByFollowerAndStatus(User follower, FollowStatus status, Pageable pageable);
 
