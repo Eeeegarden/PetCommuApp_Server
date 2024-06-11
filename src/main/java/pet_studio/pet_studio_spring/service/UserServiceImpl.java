@@ -31,9 +31,11 @@ import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_USE
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
     private ImageRepository imageRepository;
     @Autowired
     private ImageService imageService;
+    @Autowired
     private FollowService followService;
 
     public User findUserById(String id) {
@@ -111,18 +113,17 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         int followingCnt = followService.followings(optionalUser.get().getUserNo());
-//        int followerCnt = followService.follower(userId);
+        int followerCnt = followService.followers(optionalUser.get().getUserNo());
 
 
 
         User user = optionalUser.get();
-        String userImageUrl = imageService.findImage(userId).getUrl();
         UserProfileDto result = UserProfileDto.builder()
                 .nickName(user.getNickName())
                 .userId(user.getUserId())
                 .userImageUrl(user.getImg())
                 .introduce(user.getIntroduce())
-//                .followerCnt(followerCnt)
+                .followerCnt(followerCnt)
                 .followingCnt(followingCnt)
                 .build();
 
