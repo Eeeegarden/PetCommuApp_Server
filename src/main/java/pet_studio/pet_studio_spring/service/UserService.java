@@ -29,4 +29,9 @@ public interface UserService {
     public UserFollowListDto getFollowList(String userId);
 
 
+    // 닉네임 업데이트 메서드 추가
+    boolean updateNickname(String userId, String newNickname);
+
+    // 한줄소개 업데이트 메서드 추가
+    boolean updateIntroduce(String userId, String newIntroduce);
 }

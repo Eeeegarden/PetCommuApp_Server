@@ -110,16 +110,41 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = optionalUser.get();
-        String userImageUrl = imageService.findImage(userId).getUrl();
-        UserProfileDto result = UserProfileDto.builder()
-                .nickName(user.getNickName())
-                .userId(user.getUserId())
-                .userImageUrl(user.getImg())
-                .introduce(user.getIntroduce())
-                .build();
+        UserProfileDto result = new UserProfileDto();
+        result.setUserId(user.getUserId());
+        result.setNickName(user.getNickName());
+        result.setUserImageUrl(user.getImg());
+        result.setIntroduce(user.getIntroduce());
+        result.setFromMeToOthersCnt(0);
+        result.setToMeFromOthersCnt(0);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
+    // 닉네임 업데이트 메서드
+    @Override
+    public boolean updateNickname(String userId, String newNickname) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setNickName(newNickname);
+            userRepository.save(user); // 업데이트된 사용자 저장
+            return true; // 업데이트 성공
+        }
+        return false; // 사용자를 찾지 못함
+    }
+
+    // 한줄소개 업데이트 메서드
+    @Override
+    public boolean updateIntroduce(String userId, String newIntroduce) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setIntroduce(newIntroduce);
+            userRepository.save(user); // 업데이트된 사용자 저장
+            return true; // 업데이트 성공
+        }
+        return false; // 사용자를 찾지 못함
     }
 
     // 팔로우,팔로잉 목록 조희
