@@ -28,6 +28,12 @@ public class ImageServiceImpl implements ImageService {
     @Value("${spring.file.profileImagePath}")
     private String uploadFolder;
 
+    @Value("${spring.file.profileImagePath}")
+    private String profileImageUploadFolder;
+
+    @Value("${spring.file.boardImagePath}")
+    private String boardImageUploadFolder;
+
 
     @Override
     public void upload(ImageUploadDto imageUploadDTO, String userId) {
@@ -38,13 +44,14 @@ public class ImageServiceImpl implements ImageService {
         UUID uuid = UUID.randomUUID();
         String imageFileName = uuid + "_" + file.getOriginalFilename();
 
+        String uploadFolder = "profile".equals(type) ? profileImageUploadFolder : boardImageUploadFolder;
         File destinationFile = new File(uploadFolder + imageFileName);
 
         try {
             file.transferTo(destinationFile);
-
+            String imageUrl = "profile".equals(type) ? "/profileImages/" + imageFileName : "/boardImages/" + imageFileName;
             Image image = imageRepository.findByUserAndType(user, type).orElse(null);
-            String imageUrl = "/images/" + imageFileName;
+
             if (image != null) {
                 // 이미지가 이미 존재하면 url 업데이트
                 image.updateUrl(imageUrl);
@@ -55,6 +62,9 @@ public class ImageServiceImpl implements ImageService {
                         .url(imageUrl)
                         .type(type)
                         .build();
+            }
+            if ("profile".equals(image.getType())) {
+                user.updateimg(image.getUrl());
             }
             imageRepository.save(image);
 

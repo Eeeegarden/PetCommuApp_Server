@@ -3,6 +3,9 @@ package pet_studio.pet_studio_spring.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -19,8 +22,18 @@ public class Board extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(name = "favorite_count")
-    private int favorite_count;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<Likes> likes;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @Column(name = "like_count")
+    private int likeCount;
+
+    @Column(name = "comment_count")
+    private int commentCount;
+
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
@@ -29,4 +42,15 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_no")
     private User user;
+
+    public int getCommentCount() {
+        return comments.size();
+    }
+
+    // 좋아요 수 조회
+    public int getLikeCount() {
+        return likes.size();
+    }
+
+
 }

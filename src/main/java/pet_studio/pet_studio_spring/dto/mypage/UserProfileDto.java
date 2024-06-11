@@ -14,7 +14,7 @@ public class UserProfileDto {
     private String userId;
     private String nickName;
     private String userImageUrl;
-    private int fromMeToOthersCnt;
-    private int toMeFromOthersCnt;
+    private int followingCnt;
+    private int followerCnt;
     private String introduce;
 }

@@ -1,5 +1,6 @@
 package pet_studio.pet_studio_spring.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 import org.springframework.http.HttpStatus;
@@ -8,19 +9,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import pet_studio.pet_studio_spring.domain.Image;
 import pet_studio.pet_studio_spring.domain.User;
+import pet_studio.pet_studio_spring.dto.follow.FollowerDto;
+import pet_studio.pet_studio_spring.dto.follow.FollowingDto;
 import pet_studio.pet_studio_spring.dto.user.UserDto;
 import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
+import pet_studio.pet_studio_spring.dto.user.UserFollowListDto;
+import pet_studio.pet_studio_spring.exception.CustomException;
+import pet_studio.pet_studio_spring.exception.ErrorCode;
+import pet_studio.pet_studio_spring.repository.ImageRepository;
 import pet_studio.pet_studio_spring.repository.UserRepository;
-
 import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static pet_studio.pet_studio_spring.domain.FollowStatus.FOLLOWING;
+import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_NICKNAME;
+import static pet_studio.pet_studio_spring.exception.ErrorCode.ALREADY_EXIST_USER;
+
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    private ImageRepository imageRepository;
     @Autowired
     private ImageService imageService;
 
@@ -50,6 +61,7 @@ public class UserServiceImpl implements UserService {
         Image image = Image.builder()
                 .url("/profileImages/ic_account.png")
                 .user(user)
+                .type("profile")
                 .build();
         userRepository.save(user);
 
@@ -93,8 +105,8 @@ public class UserServiceImpl implements UserService {
 
     public ResponseEntity<?> myPageMain(@PathVariable("userId") String userId){
         Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (!optionalUser.isPresent()) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        if (optionalUser.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         User user = optionalUser.get();
@@ -133,5 +145,37 @@ public class UserServiceImpl implements UserService {
             return true; // 업데이트 성공
         }
         return false; // 사용자를 찾지 못함
+    }
+
+    // 팔로우,팔로잉 목록 조희
+    public UserFollowListDto getFollowList(String userId) {
+        User user = findUserById(userId);
+
+        List<FollowingDto> followingDTOs = user.getFollowingList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowingDto::convertToDTO)
+                .toList();
+
+        List<FollowerDto> followerDTOs = user.getFollowerList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowerDto::convertToDTO)
+                .toList();
+
+        return UserFollowListDto.builder()
+                .followerList(followerDTOs)
+                .followingList(followingDTOs)
+                .build();
+    }
+
+    public void validateUserId(String userId) {
+        if (userId.length() < 7) {
+            throw new CustomException(ErrorCode.INVALID_USER_ID);
+        }
+    }
+
+    public void validateUserPw(String password) {
+        if (password.length() < 7) {
+            throw new CustomException(ErrorCode.INVALID_USER_PW);
+        }
     }
 }

@@ -9,6 +9,7 @@ import pet_studio.pet_studio_spring.domain.User;
 import pet_studio.pet_studio_spring.dto.image.ImageResponseDto;
 import pet_studio.pet_studio_spring.dto.user.NicknameUpdateDto;
 import pet_studio.pet_studio_spring.dto.user.UserDto;
+import pet_studio.pet_studio_spring.dto.user.UserFollowListDto;
 import pet_studio.pet_studio_spring.service.UserService;
 import pet_studio.pet_studio_spring.service.UserServiceImpl;
 import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
@@ -16,20 +17,23 @@ import pet_studio.pet_studio_spring.dto.mypage.UserProfileDto;
 import java.util.List;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
-    @GetMapping("/user/get-all")
+    @GetMapping("/get-all")
     public List<User> getAll() {
         return userService.getAllUsers();
     }
 
-    @PostMapping("/user/save")
+    // 회원가입
+    @PostMapping("/save")
     public ResponseEntity<?> saveUser(@RequestBody UserDto user){
         return userService.save(user);
     }
 
-    @GetMapping("/user/{userId}")
+    // 프로필 조회
+    @GetMapping("/{userId}")
     public ResponseEntity<UserProfileDto> myPageMain(@PathVariable("userId") String userId) {
         ResponseEntity<UserProfileDto> response = userService.myPageMain(userId);
         if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -39,7 +43,8 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/login")
+    // 로그인
+    @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDto user) {
 
         String userId = user.getUserId();
@@ -57,7 +62,7 @@ public class UserController {
     }
 
     // 닉네임 업데이트 API 엔드포인트
-    @PutMapping("/user/updateNickname")
+    @PutMapping("/updateNickname")
     public ResponseEntity<?> updateNickname(@RequestParam String userId, @RequestParam String newNickname) {
         boolean isUpdated = userService.updateNickname(userId, newNickname);
         if (isUpdated) {
@@ -68,7 +73,7 @@ public class UserController {
     }
 
     // 한줄소개 업데이트 API 엔드포인트
-    @PutMapping("/user/updateIntroduce")
+    @PutMapping("/updateIntroduce")
     public ResponseEntity<?> updateIntroduce(@RequestParam String userId, @RequestParam String newIntroduce) {
         boolean isUpdated = userService.updateIntroduce(userId, newIntroduce);
         if (isUpdated) {
@@ -77,5 +82,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
         }
     }
-}
 
+    // 본인 팔로우/팔로잉 목록 조회
+    @GetMapping("/follow")
+    public ResponseEntity<UserFollowListDto> getFollowList(String userId) {
+
+        return ResponseEntity.ok(userService.getFollowList(userId));
+
+    }
+}
