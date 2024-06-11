@@ -124,8 +124,8 @@ public class UserServiceImpl implements UserService {
         result.setNickName(user.getNickName());
         result.setUserImageUrl(user.getImg());
         result.setIntroduce(user.getIntroduce());
-        result.setfollowerCnt(followerCnt);
-        result.setfollowingCnt(followingCnt);
+        result.setFollowerCnt(followerCnt);
+        result.setFollowingCnt(followingCnt);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
