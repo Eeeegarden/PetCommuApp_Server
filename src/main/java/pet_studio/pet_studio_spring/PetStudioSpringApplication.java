@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "pet_studio.pet_studio_spring")
+@EnableAutoConfiguration
 public class PetStudioSpringApplication {
 
 	public static void main(String[] args) {
