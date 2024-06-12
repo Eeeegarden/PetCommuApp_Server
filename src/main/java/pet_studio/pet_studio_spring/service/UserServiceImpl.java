@@ -112,10 +112,6 @@ public class UserServiceImpl implements UserService {
     // 닉네임 업데이트 메서드
     @Override
     public boolean updateNickname(String userId, String newNickname) {
-        // 새로운 닉네임이 이미 다른 사용자에게 사용 중이거나 기존 닉네임과 같은지 확인
-        if (!isNicknameAvailable(newNickname) || userRepository.existsByNickName(newNickname)) {
-            return false; // 중복된 경우 업데이트를 거부
-        }
         Optional<User> optionalUser = userRepository.findByUserId(userId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -137,11 +133,5 @@ public class UserServiceImpl implements UserService {
             return true; // 업데이트 성공
         }
         return false; // 사용자를 찾지 못함
-    }
-
-    // 중복 닉네임 확인 메서드 구현
-    @Override
-    public boolean isNicknameAvailable(String newNickname) {
-        return !userRepository.existsByNickName(newNickname);
     }
 }
