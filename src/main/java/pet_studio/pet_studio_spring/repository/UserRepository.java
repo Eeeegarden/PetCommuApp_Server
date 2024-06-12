@@ -7,7 +7,7 @@ import pet_studio.pet_studio_spring.domain.User;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long>,UserRepositoryCustom {
     Optional<User> findByUserId(String userId);
     boolean existsByUserId(String userId);
     boolean existsByNickName(String nickName);
