@@ -65,11 +65,21 @@ public class BoardController {
         }
     }
 
+
     // 게시글 목록
     @GetMapping
     public ResponseEntity<Page<BoardListDto>> getBoardList(String userId, Pageable pageable) {
 
         Page<BoardListDto> boards = boardService.getAllBoards(userId, pageable);
+
+        return ResponseEntity.ok(boards);
+    }
+
+    // 내가 쓴 글
+    @GetMapping("/myboard")
+    public ResponseEntity<Page<BoardListDto>> getMyBoardList(String userId, Pageable pageable) {
+
+        Page<BoardListDto> boards = boardService.getMyBoards(userId, pageable);
 
         return ResponseEntity.ok(boards);
     }

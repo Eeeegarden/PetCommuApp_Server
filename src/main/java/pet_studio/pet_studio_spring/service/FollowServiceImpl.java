@@ -12,6 +12,7 @@ import pet_studio.pet_studio_spring.dto.follow.FollowingDto;
 import pet_studio.pet_studio_spring.exception.CustomException;
 import pet_studio.pet_studio_spring.repository.FollowRepository;
 import pet_studio.pet_studio_spring.repository.UserRepository;
+
 import static pet_studio.pet_studio_spring.domain.FollowStatus.*;
 import static pet_studio.pet_studio_spring.exception.ErrorCode.*;
 
@@ -22,18 +23,19 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    public int followings(Long userNo){
+    public int followings(Long userNo) {
         return (int) followRepository.countByFollowingUserNo(userNo);
     }
-    public int followers(Long userNo){
+
+    public int followers(Long userNo) {
         return (int) followRepository.countByFollowerUserNo(userNo);
     }
 
     @Transactional
-    public FollowStatus toggleFollow(Long followingId,String userId) {
+    public FollowStatus toggleFollow(String followingId, String userId) {
         User follower = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        User following = userRepository.findById(followingId)
+        User following = userRepository.findByUserId(followingId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         if (follower.getUserNo().equals(following.getUserNo())) {
@@ -65,29 +67,43 @@ public class FollowServiceImpl implements FollowService {
         }
     }
 
+    @Transactional
+    public FollowStatus checkFollowStatus(String currentUserId, String userId) {
+        User currentUser = userRepository.findByUserId(currentUserId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+
+        Follow follow = followRepository.findByFollowerAndFollowing(currentUser, user)
+                .orElse(null);
+
+        if (follow == null) {
+            return UNFOLLOWING;
+        }
+
+        return follow.getStatus();
+    }
+
     public Page<FollowingDto> getFollowRequestsSentByUser(String userId, Pageable pageable) {
         User follower = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        Page<Follow> followRequestsSent = followRepository.findByFollowerAndStatus(follower, REQUESTED,
-                pageable);
+        Page<Follow> followRequestsSent = followRepository.findByFollowerAndStatus(follower, REQUESTED, pageable);
 
         return followRequestsSent.map(FollowingDto::convertToDTO);
     }
 
-    public Page<FollowingDto> getFollowRequestsReceivedByUser(String userId,
-                                                              Pageable pageable) {
+    public Page<FollowingDto> getFollowRequestsReceivedByUser(String userId, Pageable pageable) {
         User following = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        Page<Follow> followRequestsReceived = followRepository.findByFollowingAndStatus(following,
-                REQUESTED, pageable);
+        Page<Follow> followRequestsReceived = followRepository.findByFollowingAndStatus(following, REQUESTED, pageable);
 
         return followRequestsReceived.map(FollowingDto::convertToDTO);
     }
 
     @Transactional
-    public FollowStatus acceptFollowRequest(Long followerId, String userId) {
+    public FollowStatus acceptFollowRequest(Long followerId, String userId){
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 

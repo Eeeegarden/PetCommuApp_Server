@@ -32,6 +32,7 @@ public class User {
     @Column(name = "user_img")
     private String img;
 
+    // 비공개 계정 -> 팔로우 요청, 거절
     @Column(nullable = false)
     private Boolean isPrivate;
 

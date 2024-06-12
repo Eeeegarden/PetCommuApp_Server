@@ -93,7 +93,6 @@ public class BoardServiceImpl implements BoardService {
         List<User> followings = followRepository.findFollowingUsersByStatusAndFollower(FOLLOWING,
                 currentUser);
 
-        // 피드 테스트용 (팔로잉에 나 추가해서 팔로잉+내가 쓴글 조회)
         followings.add(currentUser);
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
@@ -102,6 +101,19 @@ public class BoardServiceImpl implements BoardService {
         Page<Board> boardPage = boardRepository.findByUserIn(followings, sortedPageable);
 
         return BoardListDto.convertToDTO(boardPage, userId);
+    }
+    // 내가 쓴 게시글 목록
+    public Page<BoardListDto> getMyBoards(String userId, Pageable pageable) {
+        User currentUser = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Board> boardPage = boardRepository.findByUser(currentUser, sortedPageable);
+
+        return BoardListDto.convertToDTO(boardPage, userId);
+
     }
 
 
