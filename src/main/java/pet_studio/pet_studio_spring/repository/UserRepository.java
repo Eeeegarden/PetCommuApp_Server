@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface UserRepository extends CrudRepository<User, Long>,UserRepositoryCustom {
     Optional<User> findByUserId(String userId);
     boolean existsByUserId(String userId);
-    boolean existsByNickName(String nickName);
-    Optional<User> findByNickName(String nickName);
+    boolean existsByNickName(String nickName); // 닉네임 중복 여부 확인
 }

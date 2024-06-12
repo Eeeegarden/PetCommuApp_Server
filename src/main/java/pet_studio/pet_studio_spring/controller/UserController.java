@@ -72,6 +72,13 @@ public class UserController {
         }
     }
 
+    // 닉네임 중복 방지
+    @GetMapping("/checkNickname")
+    public ResponseEntity<Boolean> checkNickname(@RequestParam String nickname) {
+        boolean isAvailable = userService.isNicknameAvailable(nickname);
+        return ResponseEntity.ok(isAvailable);
+    }
+
     // 한줄소개 업데이트 API 엔드포인트
     @PutMapping("/updateIntroduce")
     public ResponseEntity<?> updateIntroduce(@RequestParam String userId, @RequestParam String newIntroduce) {
