@@ -20,9 +20,6 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "board_id")
     private Board board;
 
-//    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
-//    private List<Reply> replies;
-
     @ManyToOne
     @JoinColumn(name = "user_no")
     private User user;

@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
                 .userId(userDto.getUserId())
                 .userPassword(userDto.getUserPassword())
                 .nickName(userDto.getNickName())
+                .isPrivate(false)
                 .introduce("한줄소개를 입력해주세요")
                 .img("/profileImages/ic_account.png")
                 .build();

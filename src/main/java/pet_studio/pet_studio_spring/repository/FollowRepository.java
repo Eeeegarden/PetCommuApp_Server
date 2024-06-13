@@ -11,12 +11,14 @@ import pet_studio.pet_studio_spring.domain.FollowStatus;
 import pet_studio.pet_studio_spring.domain.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     long countByFollowingUserNo(Long userNo);
     long countByFollowerUserNo(Long userNo);
+    Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
     boolean existsByFollowerAndFollowing(User follower, User following);
 

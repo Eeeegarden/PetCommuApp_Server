@@ -10,7 +10,9 @@ import pet_studio.pet_studio_spring.dto.board.BoardWriteRequestDto;
 
 public interface BoardService {
     Long saveBoard(BoardWriteRequestDto boardWriteRequestDto, String userId);
+
     public Page<BoardListDto> getAllBoards(String userId, Pageable pageable);
+    public Page<BoardListDto> getMyBoards(String userId, Pageable pageable);
     public BoardDetailDto getBoardById(Long boardId, String userId);
     public void toggleLikeBoard(Long boardId, String userId);
 }

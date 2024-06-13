@@ -11,5 +11,6 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
+    Page<Board> findByUser(User user,Pageable pageable);
     Page<Board> findByUserIn(List<User> followingUsers, Pageable pageable);
 }
