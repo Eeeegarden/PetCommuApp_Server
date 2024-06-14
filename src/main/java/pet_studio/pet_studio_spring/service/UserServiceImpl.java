@@ -176,16 +176,4 @@ public class UserServiceImpl implements UserService {
                 .followingList(followingDTOs)
                 .build();
     }
-
-    public void validateUserId(String userId) {
-        if (userId.length() < 7) {
-            throw new CustomException(ErrorCode.INVALID_USER_ID);
-        }
-    }
-
-    public void validateUserPw(String password) {
-        if (password.length() < 7) {
-            throw new CustomException(ErrorCode.INVALID_USER_PW);
-        }
-    }
 }
