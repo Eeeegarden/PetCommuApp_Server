@@ -1,7 +1,9 @@
 package pet_studio.pet_studio_spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +23,11 @@ public class Board extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(name = "MODIFIED_TIME")
+    @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedTime;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Likes> likes;

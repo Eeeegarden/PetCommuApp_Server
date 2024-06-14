@@ -140,9 +140,30 @@ public class UserServiceImpl implements UserService {
         return false; // 사용자를 찾지 못함
     }
 
+
+    // 팔로우,팔로잉 목록 조희
+    public UserFollowListDto getFollowList(String userId) {
+        User user = findUserById(userId);
+
+        List<FollowingDto> followingDTOs = user.getFollowingList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowingDto::convertToDTO)
+                .toList();
+
+        List<FollowerDto> followerDTOs = user.getFollowerList().stream()
+                .filter(follow -> follow.getStatus() == FOLLOWING)
+                .map(FollowerDto::convertToDTO)
+                .toList();
+
+        return UserFollowListDto.builder()
+                .followerList(followerDTOs)
+                .followingList(followingDTOs)
+                .build();
+
     // 중복 닉네임 확인 메서드 구현
     @Override
     public boolean isNicknameAvailable(String newNickname) {
         return !userRepository.existsByNickName(newNickname);
+
     }
 }

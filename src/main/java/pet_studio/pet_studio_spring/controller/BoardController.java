@@ -15,9 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pet_studio.pet_studio_spring.domain.Board;
 import pet_studio.pet_studio_spring.domain.Image;
 import pet_studio.pet_studio_spring.domain.User;
-import pet_studio.pet_studio_spring.dto.board.BoardDetailDto;
-import pet_studio.pet_studio_spring.dto.board.BoardListDto;
-import pet_studio.pet_studio_spring.dto.board.BoardWriteRequestDto;
+import pet_studio.pet_studio_spring.dto.board.*;
 import pet_studio.pet_studio_spring.repository.BoardRepository;
 import pet_studio.pet_studio_spring.repository.ImageRepository;
 import pet_studio.pet_studio_spring.repository.UserRepository;
@@ -63,6 +61,23 @@ public class BoardController {
             logger.error("Error uploading board", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 업로드에 실패했습니다.");
         }
+    }
+
+    // 게시글 수정
+    @PutMapping("/{boardId}")
+    public ResponseEntity<BoardDto> updateBoard(
+            @PathVariable Long boardId,
+            @RequestPart("boardUpdateDto") BoardUpdateDto boardUpdateDto,
+            @RequestParam("userId") String userId
+    ) {
+        BoardDto board = boardService.updateBoard(boardId, boardUpdateDto, userId);
+        return ResponseEntity.ok(board);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{boardId}")
+    public void deleteBoard(@PathVariable Long boardId, String userId) {
+        boardService.deleteBoard(boardId, userId);
     }
 
 

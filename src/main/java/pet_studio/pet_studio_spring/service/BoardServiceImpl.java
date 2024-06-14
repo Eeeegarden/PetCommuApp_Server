@@ -15,15 +15,14 @@ import pet_studio.pet_studio_spring.domain.Board;
 import pet_studio.pet_studio_spring.domain.Image;
 import pet_studio.pet_studio_spring.domain.Likes;
 import pet_studio.pet_studio_spring.domain.User;
-import pet_studio.pet_studio_spring.dto.board.BoardDetailDto;
-import pet_studio.pet_studio_spring.dto.board.BoardListDto;
-import pet_studio.pet_studio_spring.dto.board.BoardWriteRequestDto;
+import pet_studio.pet_studio_spring.dto.board.*;
 import pet_studio.pet_studio_spring.exception.CustomException;
 import pet_studio.pet_studio_spring.repository.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static pet_studio.pet_studio_spring.domain.FollowStatus.FOLLOWING;
@@ -43,6 +42,8 @@ public class BoardServiceImpl implements BoardService {
     @Value("${spring.file.boardImagePath}")
     private String uploadFolder;
 
+    
+    // 게시글 작성
     @Override
     public Long saveBoard(BoardWriteRequestDto boardWriteRequestDto, String userId) {
         User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
@@ -85,6 +86,45 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    // 게시글 수정
+    @Transactional
+    public BoardDto updateBoard(Long boardId, BoardUpdateDto boardUpdateDto, String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_POST));
+
+        if (!board.getUser().equals(user)) {
+            throw new CustomException(UNAUTHORIZED_ACCESS);
+        }
+        String img = Optional.ofNullable(boardUpdateDto.getImg()).orElse(board.getImage().getUrl());
+        String content = Optional.ofNullable(boardUpdateDto.getContent()).orElse(board.getContent());
+
+        board.getImage().updateUrl(img);
+        board.setContent(content);
+
+        boardRepository.save(board);
+
+        return BoardDto.convertToDto(board);
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void deleteBoard(Long boardId, String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_POST));
+
+        if (!board.getUser().equals(user)) {
+            throw new CustomException(UNAUTHORIZED_ACCESS);
+        }
+
+        boardRepository.delete(board);
+    }
+
     // 게시글 목록
     public Page<BoardListDto> getAllBoards(String userId, Pageable pageable){
         User currentUser = userRepository.findByUserId(userId)
@@ -96,11 +136,11 @@ public class BoardServiceImpl implements BoardService {
         followings.add(currentUser);
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdTime"));
 
         Page<Board> boardPage = boardRepository.findByUserIn(followings, sortedPageable);
 
-        return BoardListDto.convertToDTO(boardPage, userId);
+        return BoardListDto.convertToDto(boardPage, userId);
     }
     // 내가 쓴 게시글 목록
     public Page<BoardListDto> getMyBoards(String userId, Pageable pageable) {
@@ -108,11 +148,11 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdTime"));
 
         Page<Board> boardPage = boardRepository.findByUser(currentUser, sortedPageable);
 
-        return BoardListDto.convertToDTO(boardPage, userId);
+        return BoardListDto.convertToDto(boardPage, userId);
 
     }
 
@@ -150,14 +190,14 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new CustomException(NOT_FOUND_POST));
 
         if (board.getUser().equals(currentUser) || !board.getUser().getIsPrivate()) {
-            return BoardDetailDto.convertToDTO(board);
+            return BoardDetailDto.convertToDto(board);
         }
 
         boolean isFollowing = followRepository
                 .existsByStatusAndFollowerAndFollowing(FOLLOWING, currentUser, board.getUser());
 
         if (isFollowing) {
-            return BoardDetailDto.convertToDTO(board);
+            return BoardDetailDto.convertToDto(board);
         }
 
         throw new CustomException(UNAUTHORIZED_ACCESS);
