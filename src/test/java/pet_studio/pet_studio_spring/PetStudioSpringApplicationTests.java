@@ -2,7 +2,7 @@ package pet_studio.pet_studio_spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pet_studio.pet_studio_spring.service.UserServiceImpl;
+import pet_studio.pet_studio_spring.domain.user.service.UserServiceImpl;
 
 @SpringBootTest
 class PetStudioSpringApplicationTests {
