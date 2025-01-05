@@ -1,0 +1,11 @@
+package pet_studio.pet_studio_spring.domain.image.dto;
+
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+@Data
+public class ImageUploadDto {
+    private MultipartFile file;
+    private String userId;
+    private String type;
+
+}
