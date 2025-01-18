@@ -24,8 +24,6 @@ public class CustomException extends RuntimeException {
     @NoArgsConstructor
     @Getter
     public static class CustomExceptionResponse {
-
-        private int status;
         private String code;
         private String message;
     }
