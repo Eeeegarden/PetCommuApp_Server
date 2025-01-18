@@ -2,13 +2,13 @@ package pet_studio.pet_studio_spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pet_studio.pet_studio_spring.domain.user.service.UserServiceImpl;
+import pet_studio.pet_studio_spring.domain.user.service.UserService;
 
 @SpringBootTest
 class PetStudioSpringApplicationTests {
 
 	@Autowired
-	private UserServiceImpl userServiceImpl;
+	private UserService userServiceImpl;
 
 	//@Test
 //	void addUserTest() {
