@@ -24,7 +24,7 @@ public class FollowingDto {
     public static FollowingDto convertToDTO(Follow follow) {
         return FollowingDto.builder()
                 .id(follow.getId())
-                .followingId(follow.getFollowing().getUserNo())
+                .followingId(follow.getFollowing().getId())
                 .nickName(follow.getFollowing().getNickName())
                 .profileImage(follow.getFollowing().getImg())
                 .status(follow.getStatus())

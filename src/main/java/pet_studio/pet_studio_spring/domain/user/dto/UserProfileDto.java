@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @Getter
 public class UserProfileDto {
-    private String userId;
+    private String email;
     private String nickName;
     private String userImageUrl;
     private int followingCnt;

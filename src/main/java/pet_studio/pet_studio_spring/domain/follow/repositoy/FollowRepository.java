@@ -1,6 +1,6 @@
 package pet_studio.pet_studio_spring.domain.follow.repositoy;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,13 +16,13 @@ import java.util.Optional;
 @Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    long countByFollowingUserNo(Long userNo);
-    long countByFollowerUserNo(Long userNo);
+    long countByFollowing_id(Long id);
+    long countByFollower_id(Long id);
     Optional<Follow> findByFollowerAndFollowing(User follower, User following);
 
     boolean existsByFollowerAndFollowing(User follower, User following);
 
-    void deleteByFollowerUserNoAndFollowingUserNo(Long followerNo, Long followingNo);
+    void deleteByFollower_idAndFollowing_id(Long followerNo, Long followingNo);
 
     Page<Follow> findByFollowerAndStatus(User follower, FollowStatus status, Pageable pageable);
 

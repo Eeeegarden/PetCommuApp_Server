@@ -23,27 +23,27 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    public int followings(Long userNo) {
-        return (int) followRepository.countByFollowingUserNo(userNo);
+    public int followings(Long id) {
+        return (int) followRepository.countByFollowing_id(id);
     }
 
-    public int followers(Long userNo) {
-        return (int) followRepository.countByFollowerUserNo(userNo);
+    public int followers(Long id) {
+        return (int) followRepository.countByFollower_id(id);
     }
 
     @Transactional
-    public FollowStatus toggleFollow(String followingId, String userId) {
-        User follower = userRepository.findByUserId(userId)
+    public FollowStatus toggleFollow(String followingId, String email) {
+        User follower = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        User following = userRepository.findByUserId(followingId)
+        User following = userRepository.findByEmail(followingId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        if (follower.getUserNo().equals(following.getUserNo())) {
+        if (follower.getId().equals(following.getId())) {
             throw new CustomException(CANNOT_FOLLOW_YOURSELF);
         }
 
         if (followRepository.existsByFollowerAndFollowing(follower, following)) {
-            followRepository.deleteByFollowerUserNoAndFollowingUserNo(follower.getUserNo(), following.getUserNo());
+            followRepository.deleteByFollower_idAndFollowing_id(follower.getId(), following.getId());
             return UNFOLLOWING;
         } else {
             if (following.getIsPrivate()) {
@@ -68,10 +68,10 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Transactional
-    public FollowStatus checkFollowStatus(String currentUserId, String userId) {
-        User currentUser = userRepository.findByUserId(currentUserId)
+    public FollowStatus checkFollowStatus(String currentUserId, String email) {
+        User currentUser = userRepository.findByEmail(currentUserId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Follow follow = followRepository.findByFollowerAndFollowing(currentUser, user)
@@ -84,8 +84,8 @@ public class FollowServiceImpl implements FollowService {
         return follow.getStatus();
     }
 
-    public Page<FollowingDto> getFollowRequestsSentByUser(String userId, Pageable pageable) {
-        User follower = userRepository.findByUserId(userId)
+    public Page<FollowingDto> getFollowRequestsSentByUser(String email, Pageable pageable) {
+        User follower = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Page<Follow> followRequestsSent = followRepository.findByFollowerAndStatus(follower, REQUESTED, pageable);
@@ -93,8 +93,8 @@ public class FollowServiceImpl implements FollowService {
         return followRequestsSent.map(FollowingDto::convertToDTO);
     }
 
-    public Page<FollowingDto> getFollowRequestsReceivedByUser(String userId, Pageable pageable) {
-        User following = userRepository.findByUserId(userId)
+    public Page<FollowingDto> getFollowRequestsReceivedByUser(String email, Pageable pageable) {
+        User following = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Page<Follow> followRequestsReceived = followRepository.findByFollowingAndStatus(following, REQUESTED, pageable);
@@ -103,8 +103,8 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Transactional
-    public FollowStatus acceptFollowRequest(Long followerId, String userId){
-        User user = userRepository.findByUserId(userId)
+    public FollowStatus acceptFollowRequest(Long followerId, String email){
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Follow followRequest = followRepository.findById(followerId)
@@ -125,8 +125,8 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Transactional
-    public void rejectFollowRequest(Long followingId, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public void rejectFollowRequest(Long followingId, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Follow followRequest = followRepository.findById(followingId)

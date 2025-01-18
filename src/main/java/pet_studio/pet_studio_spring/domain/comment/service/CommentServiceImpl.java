@@ -31,15 +31,15 @@ public class CommentServiceImpl implements CommentService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public CommentResDto createComment(Long boardId, CommentCreateDto commentCreateDto, String userId) {
+    public CommentResDto createComment(Long boardId, CommentCreateDto commentCreateDto, String email) {
 
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_POST));
 
-        if (!Objects.equals(user.getUserId(), board.getUser().getUserId())) {
+        if (!Objects.equals(user.getEmail(), board.getUser().getEmail())) {
             boolean isFollowing = followRepository
                     .existsByStatusAndFollowerAndFollowing(FOLLOWING, user, board.getUser());
             if (!isFollowing) {
@@ -59,15 +59,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public void deleteComment(Long commentId, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_COMMENT));
 
-        if (!Objects.equals(user.getUserId(), comment.getUser().getUserId())
-                && !Objects.equals(user.getUserId(), comment.getBoard().getUser().getUserId())) {
+        if (!Objects.equals(user.getEmail(), comment.getUser().getEmail())
+                && !Objects.equals(user.getEmail(), comment.getBoard().getUser().getEmail())) {
             throw new CustomException(UNAUTHORIZED_ACCESS);
         }
 

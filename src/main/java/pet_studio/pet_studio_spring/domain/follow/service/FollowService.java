@@ -6,12 +6,12 @@ import pet_studio.pet_studio_spring.domain.follow.entity.FollowStatus;
 import pet_studio.pet_studio_spring.domain.follow.dto.FollowingDto;
 
 public interface FollowService {
-    int followings(Long userNo);
-    int followers(Long userNo);
-    FollowStatus toggleFollow(String followingId, String userId);
-    FollowStatus checkFollowStatus(String currentUserId, String userId);
-    Page<FollowingDto> getFollowRequestsSentByUser(String userId, Pageable pageable);
-    Page<FollowingDto> getFollowRequestsReceivedByUser(String userId, Pageable pageable);
-    FollowStatus acceptFollowRequest(Long followerId, String userId);
-    void rejectFollowRequest(Long followingId, String userId);
+    int followings(Long id);
+    int followers(Long id);
+    FollowStatus toggleFollow(String followingId, String email);
+    FollowStatus checkFollowStatus(String currentUserId, String email);
+    Page<FollowingDto> getFollowRequestsSentByUser(String email, Pageable pageable);
+    Page<FollowingDto> getFollowRequestsReceivedByUser(String email, Pageable pageable);
+    FollowStatus acceptFollowRequest(Long followerId, String email);
+    void rejectFollowRequest(Long followingId, String email);
 }

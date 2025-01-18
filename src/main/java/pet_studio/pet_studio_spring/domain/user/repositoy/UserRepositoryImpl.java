@@ -15,12 +15,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<User> search(User user, String text) {
-        return em.createQuery("SELECT f.toUser " +
+        return em.createQuery("SELECT f.following " +
                         "FROM Follow f " +
-                        "WHERE f.fromUser.userNo = :userId " +
-                        "AND f.toUser.nickName LIKE CONCAT(:text, '%') " +
-                        "ORDER BY f.toUser.nickName ASC", User.class)
-                .setParameter("userId", user.getUserNo())
+                        "WHERE f.follower.id = :email " +
+                        "AND f.following.nickName LIKE CONCAT(:text, '%') " +
+                        "ORDER BY f.following.nickName ASC", User.class)
+                .setParameter("email", user.getId())
                 .setParameter("text", text)
                 .setFirstResult(0)
                 .setMaxResults(5)

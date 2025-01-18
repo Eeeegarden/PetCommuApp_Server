@@ -11,12 +11,12 @@ import pet_studio.pet_studio_spring.domain.user.entity.User;
 @ToString
 public class SimpleUserDto {
 
-    private String userId;
+    private String email;
     private String nickname;
     private String img;
     @Builder
     public SimpleUserDto(User user) {
-        this.userId = user.getUserId();
+        this.email = user.getEmail();
         this.nickname = user.getNickName();
         this.img = user.getImg();
 

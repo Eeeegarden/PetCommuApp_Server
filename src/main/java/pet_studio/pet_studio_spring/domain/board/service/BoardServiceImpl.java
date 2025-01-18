@@ -49,8 +49,8 @@ public class BoardServiceImpl implements BoardService {
     
     // 게시글 작성
     @Override
-    public Long saveBoard(BoardWriteRequestDto boardWriteRequestDto, String userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
+    public Long saveBoard(BoardWriteRequestDto boardWriteRequestDto, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("아이디가 존재하지 않습니다."));
 
         MultipartFile file = boardWriteRequestDto.getFile();
 
@@ -92,8 +92,8 @@ public class BoardServiceImpl implements BoardService {
 
     // 게시글 수정
     @Transactional
-    public BoardDto updateBoard(Long boardId, BoardUpdateDto boardUpdateDto, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public BoardDto updateBoard(Long boardId, BoardUpdateDto boardUpdateDto, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Board board = boardRepository.findById(boardId)
@@ -115,8 +115,8 @@ public class BoardServiceImpl implements BoardService {
 
     // 게시글 삭제
     @Transactional
-    public void deleteBoard(Long boardId, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public void deleteBoard(Long boardId, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Board board = boardRepository.findById(boardId)
@@ -130,8 +130,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     // 게시글 목록
-    public Page<BoardListDto> getAllBoards(String userId, Pageable pageable){
-        User currentUser = userRepository.findByUserId(userId)
+    public Page<BoardListDto> getAllBoards(String email, Pageable pageable){
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         List<User> followings = followRepository.findFollowingUsersByStatusAndFollower(FOLLOWING,
@@ -144,11 +144,11 @@ public class BoardServiceImpl implements BoardService {
 
         Page<Board> boardPage = boardRepository.findByUserIn(followings, sortedPageable);
 
-        return BoardListDto.convertToDto(boardPage, userId);
+        return BoardListDto.convertToDto(boardPage, email);
     }
     // 내가 쓴 게시글 목록
-    public Page<BoardListDto> getMyBoards(String userId, Pageable pageable) {
-        User currentUser = userRepository.findByUserId(userId)
+    public Page<BoardListDto> getMyBoards(String email, Pageable pageable) {
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
@@ -156,15 +156,15 @@ public class BoardServiceImpl implements BoardService {
 
         Page<Board> boardPage = boardRepository.findByUser(currentUser, sortedPageable);
 
-        return BoardListDto.convertToDto(boardPage, userId);
+        return BoardListDto.convertToDto(boardPage, email);
 
     }
 
 
     // 좋아요
     @Transactional
-    public void toggleLikeBoard(Long boardId, String userId) {
-        User user = userRepository.findByUserId(userId)
+    public void toggleLikeBoard(Long boardId, String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Board board = boardRepository.findById(boardId)
@@ -186,8 +186,8 @@ public class BoardServiceImpl implements BoardService {
     }
     
     //게시글 상세
-    public BoardDetailDto getBoardById(Long boardId, String userId) {
-        User currentUser = userRepository.findByUserId(userId)
+    public BoardDetailDto getBoardById(Long boardId, String email) {
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
         Board board = boardRepository.findById(boardId)

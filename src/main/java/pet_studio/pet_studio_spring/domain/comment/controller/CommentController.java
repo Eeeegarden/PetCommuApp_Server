@@ -20,18 +20,18 @@ public class CommentController {
   public ResponseEntity<CommentResDto> createComment(
           @PathVariable Long boardId,
           @RequestBody CommentCreateDto commentCreateDto,
-          @RequestParam String userId
+          @RequestParam String email
   ) {
-    CommentResDto createdComment = commentService.createComment(boardId, commentCreateDto, userId);
+    CommentResDto createdComment = commentService.createComment(boardId, commentCreateDto, email);
     return ResponseEntity.ok(createdComment);
   }
 
   @DeleteMapping("/{commentId}")
   public void deleteComment(
           @PathVariable Long commentId,
-          @RequestParam String userId
+          @RequestParam String email
   ) {
-    commentService.deleteComment(commentId, userId);
+    commentService.deleteComment(commentId, email);
   }
 
   @GetMapping("/{boardId}")

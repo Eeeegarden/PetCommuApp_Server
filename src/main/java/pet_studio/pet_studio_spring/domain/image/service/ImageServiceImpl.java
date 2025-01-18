@@ -36,8 +36,8 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public void upload(ImageUploadDto imageUploadDTO, String userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
+    public void upload(ImageUploadDto imageUploadDTO, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
         MultipartFile file = imageUploadDTO.getFile();
         String type = imageUploadDTO.getType();
 
@@ -64,12 +64,12 @@ public class ImageServiceImpl implements ImageService {
                         .build();
             }
             if ("profile".equals(image.getType())) {
-                user.updateimg(image.getUrl());
+                user.updateImg(image.getUrl());
             }
             imageRepository.save(image);
 
             // User 테이블의 img 필드 업데이트
-            user.updateimg(imageUrl);
+            user.updateImg(imageUrl);
             userRepository.save(user);
             
         } catch (IOException e) {
@@ -78,8 +78,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public ImageResponseDto findImage(String userId) {
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
+    public ImageResponseDto findImage(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("이메일이 존재하지 않습니다."));
         Image image = imageRepository.findByUserAndType(user, "profile").orElse(null);
 
         String defaultImageUrl = "/profileImages/ic_account.png";

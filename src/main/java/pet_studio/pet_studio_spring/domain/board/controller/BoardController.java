@@ -36,7 +36,7 @@ public class BoardController {
     // 게시글 업로드
     @PostMapping("/upload")
     public ResponseEntity<String> uploadBoard(
-            @RequestPart("userId") String userId,
+            @RequestPart("email") String email,
             @RequestPart("file") MultipartFile file,
             @RequestPart("content") String content) {
         BoardWriteRequestDto boardWriteRequestDto = new BoardWriteRequestDto();
@@ -44,7 +44,7 @@ public class BoardController {
         boardWriteRequestDto.setContent(content);
 
         try {
-            boardService.saveBoard(boardWriteRequestDto, userId);
+            boardService.saveBoard(boardWriteRequestDto, email);
             return ResponseEntity.ok().body("게시글 업로드에 성공했습니다.");
         } catch (Exception e) {
             logger.error("Error uploading board", e);
@@ -57,33 +57,33 @@ public class BoardController {
     public ResponseEntity<BoardDto> updateBoard(
             @PathVariable Long boardId,
             @RequestPart("boardUpdateDto") BoardUpdateDto boardUpdateDto,
-            @RequestParam("userId") String userId
+            @RequestParam("email") String email
     ) {
-        BoardDto board = boardService.updateBoard(boardId, boardUpdateDto, userId);
+        BoardDto board = boardService.updateBoard(boardId, boardUpdateDto, email);
         return ResponseEntity.ok(board);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{boardId}")
-    public void deleteBoard(@PathVariable Long boardId, String userId) {
-        boardService.deleteBoard(boardId, userId);
+    public void deleteBoard(@PathVariable Long boardId, String email) {
+        boardService.deleteBoard(boardId, email);
     }
 
 
     // 게시글 목록
     @GetMapping
-    public ResponseEntity<Page<BoardListDto>> getBoardList(String userId, Pageable pageable) {
+    public ResponseEntity<Page<BoardListDto>> getBoardList(String email, Pageable pageable) {
 
-        Page<BoardListDto> boards = boardService.getAllBoards(userId, pageable);
+        Page<BoardListDto> boards = boardService.getAllBoards(email, pageable);
 
         return ResponseEntity.ok(boards);
     }
 
     // 내가 쓴 글
     @GetMapping("/myboard")
-    public ResponseEntity<Page<BoardListDto>> getMyBoardList(String userId, Pageable pageable) {
+    public ResponseEntity<Page<BoardListDto>> getMyBoardList(String email, Pageable pageable) {
 
-        Page<BoardListDto> boards = boardService.getMyBoards(userId, pageable);
+        Page<BoardListDto> boards = boardService.getMyBoards(email, pageable);
 
         return ResponseEntity.ok(boards);
     }
@@ -91,16 +91,16 @@ public class BoardController {
     // 게시글 상세
     @GetMapping("/{boardId}")
     public ResponseEntity<BoardDetailDto> getBoardDetail(@PathVariable Long boardId,
-                                                         @RequestParam String userId) {
-        BoardDetailDto board = boardService.getBoardById(boardId, userId);
+                                                         @RequestParam String email) {
+        BoardDetailDto board = boardService.getBoardById(boardId, email);
         return ResponseEntity.ok(board);
     }
     
     
     // 좋아요
     @PostMapping("/{boardId}/like")
-    public void toggleLikeBoard(@PathVariable Long boardId, String userId) {
-        boardService.toggleLikeBoard(boardId, userId);
+    public void toggleLikeBoard(@PathVariable Long boardId, String email) {
+        boardService.toggleLikeBoard(boardId, email);
     }
 
 

@@ -20,26 +20,26 @@ public class ImageController {
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
     @PostMapping("/upload")
     public ResponseEntity<String> upload(
-            @RequestPart("userId") String userId,
+            @RequestPart("email") String email,
             @RequestPart("file") MultipartFile file,
             @RequestPart("type") String type) {
         ImageUploadDto imageUploadDto = new ImageUploadDto();
-        imageUploadDto.setUserId(userId);
+        imageUploadDto.setEmail(email);
         imageUploadDto.setFile(file);
         imageUploadDto.setType(type);
 
         try {
-            imageService.upload(imageUploadDto, userId);
+            imageService.upload(imageUploadDto, email);
             return ResponseEntity.ok().body("이미지 업로드에 성공했습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이미지 업로드에 실패했습니다.");
         }
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ImageResponseDto> getImage(@PathVariable String userId) {
+    @GetMapping("/{email}")
+    public ResponseEntity<ImageResponseDto> getImage(@PathVariable String email) {
         try {
-            ImageResponseDto imageResponseDto = imageService.findImage(userId);
+            ImageResponseDto imageResponseDto = imageService.findImage(email);
             return ResponseEntity.ok(imageResponseDto);
         } catch (Exception e) {
             logger.error("Error fetching image", e);

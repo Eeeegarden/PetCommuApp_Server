@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BoardListDto {
     private Long id;
-    private String userId;
+    private String email;
     private String nickName;
     private String content;
     private String profileImg;
@@ -24,14 +24,14 @@ public class BoardListDto {
     private LocalDateTime createdTime;
     private LocalDateTime updateTime;
 
-    public static Page<BoardListDto> convertToDto(Page<Board> boardPage, String userId) {
+    public static Page<BoardListDto> convertToDto(Page<Board> boardPage, String email) {
         return boardPage.map(board -> {
             boolean likedByCurrentUser = board.getLikes().stream()
-                    .anyMatch(like -> like.getUser().getUserId().equals(userId));
+                    .anyMatch(like -> like.getUser().getEmail().equals(email));
 
         return BoardListDto.builder()
                 .id(board.getId())
-                .userId(board.getUser().getUserId())
+                .email(board.getUser().getEmail())
                 .nickName(board.getUser().getNickName())
                 .content(board.getContent())
                 .profileImg(board.getUser().getImg())

@@ -19,39 +19,39 @@ public class FollowController {
     @PostMapping("/{followingId}")
     public ResponseEntity<FollowStatus> toggleFollow(
             @PathVariable String followingId,
-            @RequestParam String userId
+            @RequestParam String email
     ) {
-        return ResponseEntity.ok(followService.toggleFollow(followingId, userId));
+        return ResponseEntity.ok(followService.toggleFollow(followingId, email));
     }
 
     @GetMapping("/status")
     public ResponseEntity<FollowStatus> checkFollowStatus(
             @RequestParam String currentUserId,
-            @RequestParam String userId
+            @RequestParam String email
     ) {
-        return ResponseEntity.ok(followService.checkFollowStatus(currentUserId, userId));
+        return ResponseEntity.ok(followService.checkFollowStatus(currentUserId, email));
     }
 
     @GetMapping("/sent")
-    public ResponseEntity<Page<FollowingDto>> getFollowRequestsSentByUser(String userId,
+    public ResponseEntity<Page<FollowingDto>> getFollowRequestsSentByUser(String email,
                                                                           Pageable pageable) {
-        return ResponseEntity.ok(followService.getFollowRequestsSentByUser(userId, pageable));
+        return ResponseEntity.ok(followService.getFollowRequestsSentByUser(email, pageable));
     }
 
     @GetMapping("/received")
-    public ResponseEntity<Page<FollowingDto>> getFollowRequestsReceivedByUser(String userId,
+    public ResponseEntity<Page<FollowingDto>> getFollowRequestsReceivedByUser(String email,
                                                                               Pageable pageable) {
-        return ResponseEntity.ok(followService.getFollowRequestsReceivedByUser(userId, pageable));
+        return ResponseEntity.ok(followService.getFollowRequestsReceivedByUser(email, pageable));
     }
 
     @PostMapping("/accept/{followerId}")
     public ResponseEntity<FollowStatus> acceptFollowRequest(
-            @PathVariable Long followerId, String userId) {
-        return ResponseEntity.ok(followService.acceptFollowRequest(followerId, userId));
+            @PathVariable Long followerId, String email) {
+        return ResponseEntity.ok(followService.acceptFollowRequest(followerId, email));
     }
 
     @PostMapping("/reject/{followingId}")
-    public void rejectFollowRequest(@PathVariable Long followingId, String userId) {
-        followService.rejectFollowRequest(followingId, userId);
+    public void rejectFollowRequest(@PathVariable Long followingId, String email) {
+        followService.rejectFollowRequest(followingId, email);
     }
 }

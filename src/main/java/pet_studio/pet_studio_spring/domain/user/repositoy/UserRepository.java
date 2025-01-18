@@ -8,8 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, Long>,UserRepositoryCustom {
-    Optional<User> findByUserId(String userId);
-    boolean existsByUserId(String userId);
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
     Optional<User> findByNickName(String nickName);
     boolean existsByNickName(String nickName); // 닉네임 중복 여부 확인
 }
