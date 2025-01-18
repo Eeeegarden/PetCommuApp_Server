@@ -3,30 +3,32 @@ package pet_studio.pet_studio_spring.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pet_studio.pet_studio_spring.domain.follow.entity.Follow;
 import pet_studio.pet_studio_spring.domain.image.entity.Image;
 import pet_studio.pet_studio_spring.domain.pet.entity.Mypet;
+import pet_studio.pet_studio_spring.domain.user.dto.SignUpDto;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@AllArgsConstructor
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userNo;
+    private Long id;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "user_password")
-    private String userPassword;
+    @Column(name = "password", nullable = false)
+    private String password;
 
-    @Column(name = "nick_name")
+    @Column(name = "nick_name", nullable = false, unique = true)
     private String nickName;
 
     @Column(name = "user_introduce")
@@ -53,9 +55,21 @@ public class User {
     @JsonBackReference
     private List<Follow> followerList;
 
-    public void updateimg(String img){
+    public static User createUser(SignUpDto signupDto, PasswordEncoder passwordEncoder) {
+        return User.builder()
+                .email(signupDto.email())
+                .password(passwordEncoder.encode(signupDto.password()))
+                .nickName(signupDto.nickName())
+                .isPrivate(false)
+                .introduce("한줄소개를 입력해주세요")
+                .img("/profileImages/ic_account.png")
+                .build();
+    }
+
+    public void updateImg(String img){
         this.img = img;
     }
-    public void updateintroduce(String introduce){this.introduce = introduce;}
+
+    public void updateIntroduce(String introduce){this.introduce = introduce;}
 
 }
